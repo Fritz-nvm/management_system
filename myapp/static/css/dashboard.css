@@ -1,0 +1,27 @@
+/* Better spacing for the grid */
+.row.g-4 {
+    --bs-gutter-x: 1.5rem;
+    --bs-gutter-y: 1.5rem;
+}
+
+/* Remove default table borders for a cleaner look */
+.table td {
+    padding: 1rem 0.75rem;
+    border-color: rgba(0,0,0,0.05);
+}
+
+/* Make the search/view button look like a pill */
+.btn-outline-primary {
+    border-color: #3b82f6;
+    color: #3b82f6;
+}
+
+.btn-outline-primary:hover {
+    background-color: #3b82f6;
+    color: white;
+}
+
+/* Add a specific warning gradient for maintenance stat cards */
+.bg-warning-gradient {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+}

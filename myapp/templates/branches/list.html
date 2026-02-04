@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}Branches - Hospital Asset Management{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="page-title">
+        <i class="bi bi-building"></i> Branches
+    </div>
+    {% if user.is_superuser or user.role.role == 'super_admin' %}
+        <a href="{% url 'branch_add' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Add Branch
+        </a>
+    {% endif %}
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <i class="bi bi-list"></i> Branch List
+    </div>
+    <div class="card-body">
+        {% if branches %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Name</th>
+                            <th>City</th>
+                            <th>Region</th>
+                            <th>Manager</th>
+                            <th>Phone</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for branch in branches %}
+                            <tr>
+                                <td><strong>{{ branch.code }}</strong></td>
+                                <td>{{ branch.name }}</td>
+                                <td>{{ branch.city }}</td>
+                                <td>{{ branch.region }}</td>
+                                <td>{{ branch.manager_name }}</td>
+                                <td>{{ branch.manager_phone }}</td>
+                                <td>
+                                    {% if branch.status == 'active' %}
+                                        <span class="badge badge-success">Active</span>
+                                    {% else %}
+                                        <span class="badge" style="background: #6b7280;">Inactive</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if user.is_superuser or user.role.role == 'super_admin' %}
+                                        <a href="{% url 'branch_edit' branch.id %}" class="btn btn-sm btn-primary" title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-center text-muted">No branches found.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

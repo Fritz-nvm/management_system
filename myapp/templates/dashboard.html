@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - Hospital Asset Management{% endblock %}
+
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="page-title mb-0">
+        <i class="bi bi-speedometer2"></i> Dashboard
+    </div>
+    <div class="quick-actions">
+        <a href="{% url 'asset_add' %}" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> New Asset
+        </a>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card">
+            <i class="bi bi-building"></i>
+            <div class="stat-number">{{ total_branches }}</div>
+            <div class="stat-label">Total Branches</div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <div class="stat-card">
+            <i class="bi bi-box2"></i>
+            <div class="stat-number">{{ total_assets }}</div>
+            <div class="stat-label">Total Assets</div>
+        </div>
+    </div>
+
+    {% for status in assets_by_status %}
+        <div class="col-md-6 col-lg-3">
+            <div class="stat-card {% if status.status == 'maintenance' %}bg-warning-gradient{% endif %}">
+                <i class="bi {% if status.status == 'available' %}bi-check-circle{% elif status.status == 'in_use' %}bi-person-gear{% else %}bi-tools{% endif %}"></i>
+                <div class="stat-number">{{ status.count }}</div>
+                <div class="stat-label">{{ status.status|title }}</div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="card shadow-lg">
+            <div class="card-header d-flex justify-content-between align-items-center py-3">
+                <span><i class="bi bi-clock-history me-2"></i>Recent Assets</span>
+                <a href="{% url 'asset_list' %}" class="btn btn-sm btn-outline-light">View All</a>
+            </div>
+            <div class="card-body p-0"> {% if recent_assets %}
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="ps-4">Asset ID</th>
+                                    <th>Name</th>
+                                    <th>Category</th>
+                                    <th>Branch</th>
+                                    <th>Status</th>
+                                    <th>Condition</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for asset in recent_assets %}
+                                    <tr>
+                                        <td class="ps-4"><strong>{{ asset.asset_id }}</strong></td>
+                                        <td>{{ asset.name }}</td>
+                                        <td><span class="text-muted">{{ asset.get_category_display }}</span></td>
+                                        <td><i class="bi bi-geo-alt-fill text-primary me-1"></i>{{ asset.branch.code }}</td>
+                                        <td>
+                                            <span class="badge-status badge-{{ asset.status }}">
+                                                {{ asset.get_status_display }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <small class="text-uppercase fw-bold">{{ asset.get_condition_display }}</small>
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="{% url 'asset_detail' asset.id %}" class="btn btn-sm btn-outline-primary rounded-pill px-3" title="View Detail">
+                                                <i class="bi bi-search me-1"></i> Details
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="p-5 text-center">
+                        <i class="bi bi-inbox text-muted display-1"></i>
+                        <p class="text-muted mt-3">No assets recorded in the system yet.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
