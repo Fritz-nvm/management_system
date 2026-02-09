@@ -823,6 +823,8 @@ body {
                             <i class="bi bi-plus-circle-fill"></i>
                             <span>Add Asset</span>
                         </a>
+
+
                         
                         {% if user.is_superuser or user.role.role == 'super_admin' or user.role.role == 'branch_manager' %}
                             <a href="{% url 'branch_list' %}" class="sidebar-link {% if request.resolver_match.url_name == 'branch_list' %}active{% endif %}">

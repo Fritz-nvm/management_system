@@ -36,6 +36,15 @@
             {% endfor %}
         </select>
 
+        <select name="category" class="form-select" style="max-width: 250px;">
+            <option value="">All Categories</option>
+            {% for value, label in category_choices %}
+                <option value="{{ value }}" {% if filter_category == value %}selected{% endif %}>
+                    {{ label }}
+                </option>
+            {% endfor %}
+        </select>
+
         <button type="submit" class="btn btn-primary">
             <i class="bi bi-search"></i> Search
         </button>
@@ -43,6 +52,16 @@
             <i class="bi bi-arrow-clockwise"></i> Reset
         </a>
     </form>
+
+    <div class="dropdown">
+  <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+    Export Data
+  </button>
+  <ul class="dropdown-menu">
+    <li><a class="dropdown-item" href="{% url 'export_assets_pdf' %}">Export to PDF</a></li>
+    <li><a class="dropdown-item" href="{% url 'export_assets_excel' %}">Export to Excel</a></li>
+  </ul>
+</div>
 </div>
 
 <div class="card">

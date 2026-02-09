@@ -8,6 +8,10 @@ from django.http import Http404
 from .models import Branch, Asset, UserRole
 from .forms import BranchForm, AssetForm
 
+from django.db.models import Q, Count, Case, When, IntegerField
+from django.core.paginator import Paginator
+from datetime import date
+
 
 def login_view(request):
     if request.user.is_authenticated:
@@ -159,6 +163,7 @@ def asset_list(request):
     search_query = request.GET.get("search", "")
     filter_branch = request.GET.get("branch", "")
     filter_status = request.GET.get("status", "")
+    filter_category = request.GET.get("category", "")
 
     if role == "super_admin":
         assets = Asset.objects.all()
@@ -187,6 +192,7 @@ def asset_list(request):
         "assets": assets,
         "branches": branches,
         "search_query": search_query,
+        "filter_category": filter_category,
         "filter_branch": filter_branch,
         "filter_status": filter_status,
         "status_choices": Asset._meta.get_field("status").choices,
@@ -284,3 +290,72 @@ def asset_delete(request, asset_id):
         return redirect("asset_list")
 
     return render(request, "assets/confirm_delete.html", {"asset": asset})
+
+
+# @login_required
+# def maintenance_list(request):
+#     # Get all assets that are in maintenance or have maintenance records
+#     assets = (
+#         Asset.objects.filter(
+#             Q(status="maintenance") | Q(maintenancerecord__isnull=False)
+#         )
+#         .distinct()
+#         .select_related("branch", "category", "maintenance_assigned_to")
+#     )
+
+#     # Get maintenance records separately for counting
+#     maintenance_records = MaintenanceRecord.objects.all()
+
+#     # Apply filters
+#     search_query = request.GET.get("search", "")
+#     if search_query:
+#         assets = assets.filter(
+#             Q(asset_id__icontains=search_query)
+#             | Q(name__icontains=search_query)
+#             | Q(maintenancerecord__issue_description__icontains=search_query)
+#             | Q(maintenancerecord__maintenance_id__icontains=search_query)
+#         ).distinct()
+
+#     filter_maintenance_status = request.GET.get("maintenance_status", "")
+#     if filter_maintenance_status:
+#         assets = assets.filter(maintenancerecord__status=filter_maintenance_status)
+
+#     filter_priority = request.GET.get("priority", "")
+#     if filter_priority:
+#         assets = assets.filter(maintenancerecord__priority=filter_priority)
+
+#     filter_branch = request.GET.get("branch", "")
+#     if filter_branch and request.user.role == "super_admin":
+#         assets = assets.filter(branch_id=filter_branch)
+
+#     # Get counts for statistics
+#     pending_count = maintenance_records.filter(status="pending").count()
+#     in_progress_count = maintenance_records.filter(status="in_progress").count()
+#     completed_count = maintenance_records.filter(status="completed").count()
+#     overdue_count = maintenance_records.filter(
+#         status__in=["pending", "in_progress"], due_date__lt=date.today()
+#     ).count()
+
+#     # Pagination
+#     paginator = Paginator(assets, 25)  # Show 25 assets per page
+#     page_number = request.GET.get("page")
+#     page_obj = paginator.get_page(page_number)
+
+#     context = {
+#         "assets": page_obj,
+#         "page_obj": page_obj,
+#         "is_paginated": paginator.num_pages > 1,
+#         "search_query": search_query,
+#         "filter_maintenance_status": filter_maintenance_status,
+#         "filter_priority": filter_priority,
+#         "filter_branch": filter_branch,
+#         "pending_count": pending_count,
+#         "in_progress_count": in_progress_count,
+#         "completed_count": completed_count,
+#         "overdue_count": overdue_count,
+#         "total_count": assets.count(),
+#         "branches": Branch.objects.all() if request.user.role == "super_admin" else [],
+#         "role": request.user.role,
+#     }
+
+#     return render(request, "maintenance/maintenance_list.html", context)

@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from . import export_views
 
 urlpatterns = [
     path("", views.dashboard, name="dashboard"),
@@ -13,4 +14,13 @@ urlpatterns = [
     path("assets/<int:asset_id>/", views.asset_detail, name="asset_detail"),
     path("assets/<int:asset_id>/edit/", views.asset_edit, name="asset_edit"),
     path("assets/<int:asset_id>/delete/", views.asset_delete, name="asset_delete"),
+    # export URLs
+    path(
+        "export/assets/pdf/", export_views.export_assets_pdf, name="export_assets_pdf"
+    ),
+    path(
+        "export/assets/excel/",
+        export_views.export_assets_excel,
+        name="export_assets_excel",
+    ),
 ]

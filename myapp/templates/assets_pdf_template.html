@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        @page {
+            size: a4 landscape;
+            margin: 0.5cm;
+        }
+        body { font-family: Helvetica, Arial, sans-serif; font-size: 10pt; }
+        .header { text-align: center; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background-color: #2c3e50; color: white; padding: 5px; }
+        td { border: 1px solid #bdc3c7; padding: 5px; text-align: center; }
+        .status-available { color: green; }
+        .status-deployed { color: blue; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Asset Inventory Report</h1>
+        <p>Generated on: {% now "Y-m-d H:i" %}</p>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Asset ID</th>
+                <th>Name</th>
+                <th>Branch</th>
+                <th>Department</th>
+                <th>Manufacturer</th>
+                <th>Serial Number</th>
+                <th>Purchase Date</th>
+                <th>Custodian Name</th>
+                <th>Custodian Phone</th>
+                <th>Status</th>
+                <th>Condition</th>
+                <th>Cost</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for asset in assets %}
+            <tr>
+                <td>{{ asset.asset_id }}</td>
+                <td>{{ asset.name }}</td>
+                <td>{{ asset.branch.name }}</td>
+                <td>{{ asset.department }}</td>
+                <td>{{ asset.supplier_name }}</td>
+                <td>{{ asset.serial_number }}</td>
+                <td>{{ asset.purchase_date}}</td>
+                <td>{{ asset.custodian_name }}</td>
+                <td>{{ asset.custodian_phone }}</td>
+                <td>{{ asset.get_status_display }}</td>
+                <td>{{ asset.get_condition_display }}</td>
+                <td>${{ asset.purchase_cost }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
