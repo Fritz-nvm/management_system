@@ -11,13 +11,12 @@
         <i class="bi bi-plus-circle"></i> Add Asset
     </a>
 </div>
-
 <div class="search-box">
     <form method="get" class="d-flex gap-2 flex-wrap" style="width: 100%;">
         <input type="text" name="search" class="form-control" placeholder="Search by name or asset ID" value="{{ search_query }}">
 
         {% if role == 'super_admin' %}
-            <select name="branch" class="form-select" style="max-width: 250px;">
+            <select name="branch" class="form-select" style="max-width: 200px;">
                 <option value="">All Branches</option>
                 {% for branch in branches %}
                     <option value="{{ branch.id }}" {% if filter_branch|stringformat:"s" == branch.id|stringformat:"s" %}selected{% endif %}>
@@ -27,41 +26,46 @@
             </select>
         {% endif %}
 
-        <select name="status" class="form-select" style="max-width: 250px;">
+        <select name="status" class="form-select" style="max-width: 150px;">
             <option value="">All Status</option>
             {% for value, label in status_choices %}
-                <option value="{{ value }}" {% if filter_status == value %}selected{% endif %}>
-                    {{ label }}
-                </option>
+                <option value="{{ value }}" {% if filter_status == value %}selected{% endif %}>{{ label }}</option>
             {% endfor %}
         </select>
 
-        <select name="category" class="form-select" style="max-width: 250px;">
+        <select name="category" class="form-select" style="max-width: 150px;">
             <option value="">All Categories</option>
             {% for value, label in category_choices %}
-                <option value="{{ value }}" {% if filter_category == value %}selected{% endif %}>
-                    {{ label }}
-                </option>
+                <option value="{{ value }}" {% if filter_category == value %}selected{% endif %}>{{ label }}</option>
             {% endfor %}
         </select>
 
         <button type="submit" class="btn btn-primary">
             <i class="bi bi-search"></i> Search
         </button>
-        <a href="{% url 'asset_list' %}" class="btn btn-secondary">
+        
+        <a href="{% url 'asset_list' %}" class="btn btn-outline-secondary">
             <i class="bi bi-arrow-clockwise"></i> Reset
         </a>
-    </form>
 
-    <div class="dropdown">
-  <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-    Export Data
-  </button>
-  <ul class="dropdown-menu">
-    <li><a class="dropdown-item" href="{% url 'export_assets_pdf' %}">Export to PDF</a></li>
-    <li><a class="dropdown-item" href="{% url 'export_assets_excel' %}">Export to Excel</a></li>
-  </ul>
-</div>
+        <div class="dropdown">
+            <button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-download"></i> Export
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                    <a class="dropdown-item" href="{% url 'export_assets_pdf' %}?{{ request.GET.urlencode }}">
+                        <i class="bi bi-file-earmark-pdf text-danger"></i> Export PDF
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="{% url 'export_assets_excel' %}?{{ request.GET.urlencode }}">
+                        <i class="bi bi-file-earmark-excel text-success"></i> Export Excel
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </form>
 </div>
 
 <div class="card">

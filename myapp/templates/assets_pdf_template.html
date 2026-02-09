@@ -1,26 +1,78 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <style>
         @page {
             size: a4 landscape;
-            margin: 0.5cm;
+            margin: 1cm;
         }
-        body { font-family: Helvetica, Arial, sans-serif; font-size: 10pt; }
-        .header { text-align: center; margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; }
-        th { background-color: #2c3e50; color: white; padding: 5px; }
-        td { border: 1px solid #bdc3c7; padding: 5px; text-align: center; }
-        .status-available { color: green; }
-        .status-deployed { color: blue; }
+        body { 
+            font-family: Helvetica, Arial, sans-serif; 
+            font-size: 8pt; /* Reduced slightly to fit 12 columns comfortably */
+            color: #333;
+        }
+        
+        /* Header Table Setup */
+        .header-table {
+            width: 100%;
+            border: none;
+            margin-bottom: 20px;
+        }
+        .header-table td {
+            border: none;
+            vertical-align: middle;
+            text-align: center;
+        }
+        .logo-col {
+            width: 15%; /* Space for images */
+        }
+        .text-col {
+            width: 70%;
+        }
+        
+        .title-main { font-size: 14pt; font-weight: bold; margin: 0; }
+        .title-sub { font-size: 12pt; font-weight: bold; margin: 2px 0; }
+        .title-info { font-size: 10pt; margin: 2px 0; text-transform: uppercase; }
+
+        /* Data Table Setup */
+        table.data-table { width: 100%; border-collapse: collapse; }
+        table.data-table th { 
+            background-color: #2c3e50; 
+            color: white; 
+            padding: 4px; 
+            font-size: 7pt; 
+        }
+        table.data-table td { 
+            border: 1px solid #bdc3c7; 
+            padding: 4px; 
+            text-align: center; 
+        }
+        .footer-note { font-size: 7pt; margin-top: 10px; color: #777; }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Asset Inventory Report</h1>
-        <p>Generated on: {% now "Y-m-d H:i" %}</p>
-    </div>
-    <table>
+
+    <table class="header-table">
+        <tr>
+            <td class="logo-col">
+                <img src="{% static 'images/logos/presb_logo1.png' %}" width="80">
+            </td>
+            <td class="text-col">
+                <div class="title-main">PRESBYTERIAN CHURCH IN CAMEROON</div>
+                <div class="title-sub">PCC HEALTH SERVICES</div>
+                <div class="title-info">
+                    BIOMEDICAL EQUIPMENT INVENTORY FORM FOR THE YEAR: {{report_period}}<br>
+                    INSTITUTION: PRESBYTERIAN DIAGNOSTIC URGENT CARE HOSPITAL (PDUCH)
+                </div>
+            </td>
+            <td class="logo-col">
+                <img src="{% static 'images/logos/presb_logo2.png' %}" width="80">
+            </td>
+        </tr>
+    </table>
+
+    <table class="data-table">
         <thead>
             <tr>
                 <th>Asset ID</th>
@@ -30,8 +82,8 @@
                 <th>Manufacturer</th>
                 <th>Serial Number</th>
                 <th>Purchase Date</th>
-                <th>Custodian Name</th>
-                <th>Custodian Phone</th>
+                <th>Custodian</th>
+                <th>Phone</th>
                 <th>Status</th>
                 <th>Condition</th>
                 <th>Cost</th>
@@ -43,18 +95,23 @@
                 <td>{{ asset.asset_id }}</td>
                 <td>{{ asset.name }}</td>
                 <td>{{ asset.branch.name }}</td>
-                <td>{{ asset.department }}</td>
-                <td>{{ asset.supplier_name }}</td>
+                <td>{{ asset.get_department_display }}</td>
+                <td>{{ asset.brand }}</td>
                 <td>{{ asset.serial_number }}</td>
-                <td>{{ asset.purchase_date}}</td>
+                <td>{{ asset.purchase_date|date:"d/m/Y" }}</td>
                 <td>{{ asset.custodian_name }}</td>
                 <td>{{ asset.custodian_phone }}</td>
                 <td>{{ asset.get_status_display }}</td>
                 <td>{{ asset.get_condition_display }}</td>
-                <td>${{ asset.purchase_cost }}</td>
+                <td>{{ asset.purchase_cost }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+
+    <div class="footer-note">
+        Generated on: {% now "F j, Y, g:i a" %} | Source: PDUCH Inventory System
+    </div>
+
 </body>
 </html>

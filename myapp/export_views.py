@@ -6,6 +6,7 @@ from xhtml2pdf import pisa
 from openpyxl.styles import Font
 import openpyxl
 from .models import Asset
+from datetime import datetime
 
 
 def link_callback(uri, rel):
@@ -21,8 +22,15 @@ def link_callback(uri, rel):
 
 def export_assets_pdf(request):
     assets = Asset.objects.all()
-    template_path = "pdf_template.html"
-    context = {"assets": assets}
+
+    now = datetime.now()
+    current_inventory_period = now.strftime("%B %Y").upper()
+    template_path = "assets_pdf_template.html"
+    context = {
+        "assets": assets,
+        "report_period": current_inventory_period,
+        "generated_at": now,
+    }
 
     response = HttpResponse(content_type="application/pdf")
     response["Content-Disposition"] = 'attachment; filename="inventory_report.pdf"'
